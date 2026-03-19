@@ -38,7 +38,7 @@ let rec inputIntTree () =
 
 let rec mapTree func tree =
     match tree with
-    | Empty -> Empty
+    | IntEmpty -> IntEmpty
     | IntNode(value, left, right) ->
         IntNode(func value, mapTree func left, mapTree func right)
 
@@ -68,9 +68,9 @@ let rec inputStrTree () =
         StrEmpty
     else
         let value = input
-        printfn "Левый потомок %d:" value
+        printfn "Левый потомок %s:" value
         let left = inputStrTree()
-        printfn "Правый потомок %d:" value
+        printfn "Правый потомок %s:" value
         let right = inputStrTree()
         StrNode(value, left, right)
 
