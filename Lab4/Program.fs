@@ -26,7 +26,7 @@ let rec inputIntTree () =
     else
         match Int32.TryParse(input) with
         | true, input ->
-            let value = int input
+            let value = input
             printfn "Левый потомок %d:" value
             let left = inputIntTree()
             printfn "Правый потомок %d:" value
@@ -67,11 +67,11 @@ let rec inputStrTree () =
     if input = "" then
         StrEmpty
     else
-        let value = int input
+        let value = input
         printfn "Левый потомок %d:" value
-        let left = inputIntTree()
+        let left = inputStrTree()
         printfn "Правый потомок %d:" value
-        let right = inputIntTree()
+        let right = inputStrTree()
         StrNode(value, left, right)
 
 let rec foldTransformTree func acc tree =
