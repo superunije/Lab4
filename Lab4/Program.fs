@@ -14,7 +14,9 @@ let rec printInOrder tree level =
     | IntEmpty -> ()
     | IntNode (value, left, right) ->
         printInOrder right (level + 1)
-        printfn "%s%d" (String.replicate (level * 4) " ") value
+        for n in 1 .. (level * 4) do 
+            printf " "
+        printfn "%d" value
         printInOrder left (level + 1)
 
 let rec insert value tree =
