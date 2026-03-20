@@ -95,6 +95,7 @@ let countEndingCharTree (ch : string) acc (value : string) =
 let main argvs =
     printfn "Введите номер задания"
     let task = Console.ReadLine()
+    // надо ввод рандомных значений
     match task with
     | "1" ->
         printfn "Введите дерево"
