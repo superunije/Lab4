@@ -9,32 +9,36 @@ type StrTree =
     | StrEmpty
     | StrNode of string * StrTree * StrTree
 
-let rec printInOrder tree =
+let rec printInOrder tree level =
     match tree with
-    | IntNode (data, left, right) ->
-        printInOrder left
-        printfn "Node %d" data
-        printInOrder right
-    | IntEmpty ->
-        ()
+    | IntEmpty -> ()
+    | IntNode (value, left, right) ->
+        printInOrder right (level + 1)
+        printfn "%s%d" (String.replicate (level * 4) " ") value
+        printInOrder left (level + 1)
 
-let rec inputIntTree () =
+let rec insert value tree =
+    match tree with
+    | IntEmpty -> IntNode(value, IntEmpty, IntEmpty)
+    | IntNode(v, left, right) ->
+        if value < v then
+            IntNode(v, insert value left, right)
+        else
+            IntNode(v, left, insert value right)
+
+let rec inputIntTree tree =
     printfn "Введите значение узла(целое число)"
     let input = Console.ReadLine()
     if input = "" then
-        IntEmpty
+        tree
     else
         match Int32.TryParse(input) with
-        | true, input ->
-            let value = input
-            printfn "Левый потомок %d:" value
-            let left = inputIntTree()
-            printfn "Правый потомок %d:" value
-            let right = inputIntTree()
-            IntNode(value, left, right)
+        | true, value ->
+            let newTree = insert value tree
+            inputIntTree newTree
         | _ ->
             printfn "Введите целое число"
-            inputIntTree()
+            inputIntTree tree
 
 let rec mapTree func tree =
     match tree with
@@ -92,17 +96,18 @@ let main argvs =
     match task with
     | "1" ->
         printfn "Введите дерево"
-        let tree = inputIntTree()
+        let tree = inputIntTree IntEmpty
         let newTree = mapTransformTree tree
         printfn "Изначальное дерево"
-        printInOrder tree
+        printInOrder tree 0
         printfn "Изменённое дерево"
-        printInOrder newTree
+        printInOrder newTree 0
     | "2" ->
         printfn "Введите дерево"
         let tree = inputStrTree()
         printfn "Введите символ для поиска"
-        let keyChar = Console.ReadLine()
+        let inputChar = Console.ReadLine()
+        let keyChar = string inputChar[0]
         let treeQuantity = foldTransformTree (countEndingCharTree keyChar) 0 tree
         printfn "Количество узлов с символом в конце: %i" treeQuantity
     | _ ->
