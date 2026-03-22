@@ -9,15 +9,25 @@ type StrTree =
     | StrEmpty
     | StrNode of string * StrTree * StrTree
 
-let rec printInOrder tree level =
+let rec printIntInOrder tree level =
     match tree with
     | IntEmpty -> ()
     | IntNode (value, left, right) ->
-        printInOrder right (level + 1)
+        printIntInOrder right (level + 1)
         for n in 1 .. (level * 4) do 
             printf " "
         printfn "%d" value
-        printInOrder left (level + 1)
+        printIntInOrder left (level + 1)
+
+let rec printStrInOrder tree level =
+    match tree with
+    | StrEmpty -> ()
+    | StrNode (value, left, right) ->
+        printStrInOrder right (level + 1)
+        for n in 1 .. (level * 4) do 
+            printf " "
+        printfn "%s" value
+        printStrInOrder left (level + 1)
 
 let rec insert value tree =
     match tree with
@@ -28,19 +38,27 @@ let rec insert value tree =
         else
             IntNode(v, left, insert value right)
 
-let rec inputIntTree tree =
-    printfn "Введите значение узла(целое число)"
-    let input = Console.ReadLine()
-    if input = "" then
-        tree
+//вставка не рандомная
+//let rec inputIntTree tree =
+//    printfn "Введите значение узла(целое число)"
+//    let input = Console.ReadLine()
+//    if input = "" then
+//        tree
+//    else
+//        match Int32.TryParse(input) with
+//        | true, value ->
+//            let newTree = insert value tree
+//            inputIntTree newTree
+//        | _ ->
+//            printfn "Введите целое число"
+//            inputIntTree tree
+
+let rec inputIntTree input tree =
+    if input <= 0 then tree
     else
-        match Int32.TryParse(input) with
-        | true, value ->
-            let newTree = insert value tree
-            inputIntTree newTree
-        | _ ->
-            printfn "Введите целое число"
-            inputIntTree tree
+        let rnd = Random()
+        let value = rnd.Next(1, 100) // числа от 1 до 99
+        inputIntTree (input - 1) (insert value tree)
 
 let rec mapTree func tree =
     match tree with
@@ -67,18 +85,36 @@ let transformNumber n =
 let mapTransformTree tree =
     mapTree transformNumber tree
 
-let rec inputStrTree () =
-    printfn "Введите значение узла(строка)"
-    let input = Console.ReadLine()
-    if input = "" then
-        StrEmpty
+//let rec inputStrTree () =
+//    printfn "Введите значение узла(строка)"
+//    let input = Console.ReadLine()
+//    if input = "" then
+//        StrEmpty
+//    else
+//        let value = input
+//        printfn "Левый потомок %s:" value
+//        let left = inputStrTree()
+//        printfn "Правый потомок %s:" value
+//        let right = inputStrTree()
+//        StrNode(value, left, right)
+
+let rec insertStr value tree =
+    match tree with
+    | StrEmpty -> StrNode(value, StrEmpty, StrEmpty)
+    | StrNode(v, left, right) ->
+        if value < v then StrNode(v, insertStr value left, right)
+        else StrNode(v, left, insertStr value right)
+
+let rec inputStrTree n tree =
+    if n <= 0 then tree
     else
-        let value = input
-        printfn "Левый потомок %s:" value
-        let left = inputStrTree()
-        printfn "Правый потомок %s:" value
-        let right = inputStrTree()
-        StrNode(value, left, right)
+        let rnd = Random()
+        let value =
+            // случайная строка длиной 3 буквы
+            [for _ in 1..3 -> char (rnd.Next(int 'A', int 'Z' + 1)) ]
+            |> Array.ofList
+            |> String
+        inputStrTree (n - 1) (insertStr value tree)
 
 let rec foldTransformTree func acc tree =
     match tree with
@@ -98,21 +134,33 @@ let main argvs =
     // надо ввод рандомных значений
     match task with
     | "1" ->
-        printfn "Введите дерево"
-        let tree = inputIntTree IntEmpty
-        let newTree = mapTransformTree tree
-        printfn "Изначальное дерево"
-        printInOrder tree 0
-        printfn "Изменённое дерево"
-        printInOrder newTree 0
+        printf "Введите количество узлов в дереве: "
+        let input = Console.ReadLine()
+        match Int32.TryParse(input) with
+        | true, n when n > 0 ->
+            let tree = inputIntTree n IntEmpty
+            let newTree = mapTransformTree tree
+            printfn "Изначальное дерево"
+            printIntInOrder tree 0
+            printfn "Изменённое дерево"
+            printIntInOrder newTree 0
+        | _ ->
+            printfn "Введите корректное положительное число"
     | "2" ->
-        printfn "Введите дерево"
-        let tree = inputStrTree()
-        printfn "Введите символ для поиска"
-        let inputChar = Console.ReadLine()
-        let keyChar = string inputChar[0]
-        let treeQuantity = foldTransformTree (countEndingCharTree keyChar) 0 tree
-        printfn "Количество узлов с символом в конце: %i" treeQuantity
+        printf "Введите количество узлов в дереве: "
+        let input = Console.ReadLine()
+        match Int32.TryParse(input) with
+        | true, n when n > 0 ->
+            let tree = inputStrTree n StrEmpty
+            printfn "Изначальное дерево"
+            printStrInOrder tree 0
+            printfn "Введите символ для поиска"
+            let inputChar = Console.ReadLine()
+            let keyChar = string inputChar[0]
+            let treeQuantity = foldTransformTree (countEndingCharTree keyChar) 0 tree
+            printfn "Количество узлов с символом в конце: %i" treeQuantity
+        | _ ->
+            printfn "Введите корректное положительное число"
     | _ ->
         ()
     0
