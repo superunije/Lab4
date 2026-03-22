@@ -111,7 +111,7 @@ let rec inputStrTree n tree =
         let rnd = Random()
         let value =
             // случайная строка длиной 3 буквы
-            [for _ in 1..3 -> char (rnd.Next(int 'A', int 'Z' + 1)) ]
+            [for _ in 1..5 -> char (rnd.Next(int 'A', int 'Z' + 1)) ]
             |> Array.ofList
             |> String
         inputStrTree (n - 1) (insertStr value tree)
