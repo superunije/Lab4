@@ -110,7 +110,6 @@ let rec inputStrTree n tree =
     else
         let rnd = Random()
         let value =
-            // случайная строка длиной 3 буквы
             [for _ in 1..5 -> char (rnd.Next(int 'A', int 'Z' + 1)) ]
             |> Array.ofList
             |> String
@@ -131,7 +130,6 @@ let countEndingCharTree (ch : string) acc (value : string) =
 let main argvs =
     printfn "Введите номер задания"
     let task = Console.ReadLine()
-    // надо ввод рандомных значений
     match task with
     | "1" ->
         printf "Введите количество узлов в дереве: "
